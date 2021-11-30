@@ -32,17 +32,18 @@ function handleRegisterUser(
     dataCadastro: Date.now(),
   };
 */
-  /*const credenciais = {
+  const credenciais = {
     email: user.email,
     senha: user.senha,
   };
-  */
+
+  /*
   // só p testes
   const credenciais = {
     email: "toni@gmail.com ",
     senha: "1",
   };
-
+*/
   //verifica se é login ou registro
   if ((user.endereco_completo && user.nro_celular) == null) {
     //no caso de LOGIN:
