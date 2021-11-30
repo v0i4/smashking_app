@@ -224,7 +224,7 @@ function Pedido({ navigation, route }) {
           }}
           style={styles.enviarPedidoBtn}
         >
-          <Text style={{ color: "#503292" }}>continuar!</Text>
+          <Text style={{ color: "#503292" }}>enviar!</Text>
         </TouchableOpacity>
       </View>
 

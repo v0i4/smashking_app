@@ -196,7 +196,7 @@ function DetalhesPedido({ navigation, route }) {
           }}
           style={styles.enviarPedidoBtn}
         >
-          <Text style={{ color: "#503292" }}>meu pedido({pedido.length})</Text>
+          <Text style={{ color: "#503292" }}>avançar({pedido.length})</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.container_list}>
