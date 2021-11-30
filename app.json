@@ -14,7 +14,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./app/assets/smashking.png",
+          "icon": "./app/assets/smashking .png",
           "color": "#ffffff",
           "mode": "production"
         }
@@ -30,6 +30,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.orbis_dev.smashking",
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
