@@ -4,14 +4,22 @@ import api from "../../services/api";
 
 function AcompanharPedido({ navigation, route }) {
   const [ordemServico, setOrdemServico] = useState(route.params.ordemservico);
-  /*const [status, setStatus] = useState(
-    getStatusByOrdemServicoId("619d7c3d4864c63c403419cb")
-  );*/
+  const [status, setStatus] = useState(ordemServico.status);
   const user = route.params.user;
+
+  async function getStatus(user_id) {
+    try {
+      const response = await api.get("/ordemservico/user_id/" + user_id);
+      console.log(response);
+      return response.data;
+    } catch (err) {
+      alert(err.message);
+    }
+  }
 
   async function getStatusByOrdemServicoId(id_ordemservico) {
     try {
-      console.log("id_ordi" + id_ordemservico);
+      console.log("id_ordi" + JSON.stringify(id_ordemservico));
       const response = await api.get("/ordemservico/" + id_ordemservico);
       console.log(response.data.ordens[0].status);
       return response.data.ordens[0].status;
@@ -57,6 +65,26 @@ function AcompanharPedido({ navigation, route }) {
     return retorno;
   }
 
+  async function refreshStatusMsg() {
+    let statusMsg = "";
+    let sts = "";
+
+    sts = await getStatus(ordemServico.user_id);
+    let data = new Date(sts.ordens[0].data);
+
+    setStatus(
+      /*data.getHours() + ":" + data.getMinutes() + " " + */ sts.ordens[0]
+        .status
+    );
+
+    statusMsg =
+      status +
+      "\nprevisão de entrega: 60 mins" +
+      "\nvocê será notificado a cada etapa do processo de produção; por favor, aguarde..";
+
+    return statusMsg;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.infosPessoais}>
@@ -90,32 +118,44 @@ function AcompanharPedido({ navigation, route }) {
       <View style={styles.infosStatus}>
         <Text style={styles.title}>Status:</Text>
         <Text></Text>
-        <Text style={styles.base}>{ordemServico.status}</Text>
+        <Text style={styles.base}>{status}</Text>
       </View>
-      <View>
-        <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={() =>
-            alert(
-              "previsão de entrega: 60 mins" +
-                "\nvocê será notificado a cada etapa do processo de produção; por favor, aguarde.."
-            )
-          }
-        >
-          <Text>verificar status</Text>
-        </TouchableOpacity>
+      <View></View>
 
-        <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={() =>
-            navigation.navigate("Cardapio", {
-              user: user,
-              zerarPedido: true,
-            })
-          }
-        >
-          <Text>fazer outro pedido</Text>
-        </TouchableOpacity>
+      <View style={styles.footer}>
+        <View style={styles.footerCol1}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Cardapio", {
+                user: user,
+                zerarPedido: true,
+              });
+            }}
+            style={styles.enviarPedidoBtn}
+          >
+            <Text style={{ color: "#503292", fontSize: 12 }}>
+              fazer outro pedido
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.footerCol2}>
+          <TouchableOpacity
+            style={styles.enviarPedidoBtn}
+            onPress={() =>
+              refreshStatusMsg().then(
+                alert(
+                  "\ntempo médio de entrega: 60 mins" +
+                    "\nvocê será notificado a cada etapa do processo de produção; por favor, aguarde.."
+                )
+              )
+            }
+          >
+            <Text style={{ color: "#503292", fontSize: 12 }}>
+              verificar status
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -152,12 +192,45 @@ const styles = StyleSheet.create({
 
   loginBtn: {
     width: "80%",
-    borderRadius: 25,
-    height: 50,
+    borderRadius: 50,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
-    backgroundColor: "#503292",
+    backgroundColor: "#ffcd17",
+  },
+
+  footer: {
+    flexShrink: 1,
+    position: "absolute",
+    bottom: 0,
+    height: 40,
+    backgroundColor: "#ffcd17",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 100,
+    fontSize: 5,
+  },
+
+  footerCol1: {
+    flexShrink: 1,
+    backgroundColor: "#ffcd17",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    fontSize: 5,
+  },
+
+  footerCol2: {
+    flexShrink: 1,
+    backgroundColor: "#ffcd17",
+    flexDirection: "column",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    fontSize: 5,
   },
 });
 
