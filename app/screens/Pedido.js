@@ -69,6 +69,38 @@ function Pedido({ navigation, route }) {
     return valorParcial + valor_entrega;
   }
 
+  function calcularPrecoFinal(valor_entrega) {
+    let soma = 0;
+    console.log("AQUI");
+    console.log(pedido);
+
+    try {
+      for (let p of pedido) {
+        soma += parseFloat(p.preco) * parseFloat(p.quantidade);
+
+        //  if (p.adicionais.length > 0) {
+        for (let a of p.adicionais) {
+          soma += parseFloat(a.preco) * parseFloat(a.quantidade);
+          //console.log(p.adicionais);
+        }
+        // }
+      }
+    } catch (error) {
+      for (let p of pedido[0]) {
+        soma += parseFloat(p.preco) * parseFloat(p.quantidade);
+
+        //if (p.adicionais.length > 0) {
+        for (let a of p.adicionais) {
+          soma += parseFloat(a.preco) * parseFloat(a.quantidade);
+          //console.log(p.adicionais);
+        }
+        // }
+      }
+    }
+
+    return soma + valor_entrega;
+  }
+
   let ordemServico = {
     user_id: user._id,
     nome: user.nome,
@@ -80,7 +112,7 @@ function Pedido({ navigation, route }) {
         ? user.endereco_completo
         : "RETIRADA NO BALCAO",
     valor_entrega: 5,
-    preco: calcularPreco(valorParcial, 5),
+    preco: calcularPrecoFinal(5),
     troco_para: troco,
     forma_pagamento: pagamentoLabel,
     token: user.token,

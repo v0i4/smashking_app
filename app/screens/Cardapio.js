@@ -14,6 +14,7 @@ import Dialog from "react-native-dialog";
 import api from "../../services/api";
 import SelectDropdown from "react-native-select-dropdown";
 import Pedido from "./Pedido";
+import RadioButtonRN from "radio-buttons-react-native";
 
 function Cardapio({ navigation, route }) {
   const [lanches, setLanches] = useState([]);
@@ -23,10 +24,24 @@ function Cardapio({ navigation, route }) {
   const [quantidade, setQuantidade] = useState(1);
   const user = route.params.user;
   const zerarPedido = route.params.zerarPedido;
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState("todos");
+  const [categoriasDialog, setCategoriasDialog] = useState(false);
+  const [categoriasLabel, setCategoriasLabel] = useState("categorias");
+  const [valorParcial, setValorParcial] = useState(
+    route.params.valorParcial != null ? valorParcial : parseInt(0)
+  );
+  const categorias = [
+    { label: "avulsos" },
+    { label: "combos" },
+    { label: "bebidas" },
+    { label: "doces" },
+    { label: "todos" },
+  ];
 
   useEffect(() => {
     getLanches();
     obterExpediente();
+    setValorParcial(route.params.valorParcial);
 
     if (zerarPedido) {
       for (let p in pedido) {
@@ -36,6 +51,11 @@ function Cardapio({ navigation, route }) {
       setPedido(pedido);
     }
   }, []);
+
+  useEffect(() => {
+    getLanches();
+    obterExpediente();
+  }, [categoriaSelecionada]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -105,15 +125,23 @@ function Cardapio({ navigation, route }) {
 
   async function getLanches() {
     try {
-      const response = await api.get("/lanches");
-      setLanches(response.data.lanches);
-      //console.log(lanches);
+      if (categoriaSelecionada == "todos") {
+        const response = await api.get("/lanches");
+        setLanches(response.data.lanches);
+        //console.log(lanches);
+      } else {
+        const response = await api.get(
+          "/lanches/categoria/" + categoriaSelecionada
+        );
+        setLanches(response.data.lanches);
+        //console.log(lanches);
+      }
     } catch (err) {
       alert(err.message);
     }
   }
 
-  function Lanches({ foto, nome, descricao, preco, _id }) {
+  function Lanches({ foto, nome, descricao, preco, _id, categoria }) {
     const lanche = {
       foto: foto,
       nome: nome,
@@ -122,6 +150,7 @@ function Cardapio({ navigation, route }) {
       _id: _id,
       quantidade: quantidade,
       adicionais: [],
+      categoria: categoria,
     };
 
     return (
@@ -162,6 +191,7 @@ function Cardapio({ navigation, route }) {
                     pedido: pedido,
                     user: user,
                     lanche: lanche,
+                    valorParcial: valorParcial,
                   });
                 }
               }}
@@ -181,22 +211,30 @@ function Cardapio({ navigation, route }) {
         <TouchableOpacity style={styles.enviarPedidoBtn}>
           <Text style={{ color: "#503292" }}>olá {user.nome}</Text>
         </TouchableOpacity>
-
         <TouchableOpacity
           onPress={() => {
-            console.log(pedido);
-            /* navigation.navigate("Pedido", {
-              pedido: pedido,
-              user: user,
-            });*/
+            setCategoriasDialog(true);
           }}
           style={styles.enviarPedidoBtn}
         >
           <Text style={{ color: "#503292" }}>
-            meu pedido({atualizarPedidos()})
+            categorias({categorias.length}) - {categoriaSelecionada}
           </Text>
         </TouchableOpacity>
+
+        <Dialog.Container visible={categoriasDialog}>
+          <Dialog.Title>escolha a categoria:</Dialog.Title>
+
+          <RadioButtonRN
+            data={categorias}
+            selectedBtn={(e) => {
+              setCategoriaSelecionada(e.label);
+              setCategoriasDialog(false);
+            }}
+          />
+        </Dialog.Container>
       </View>
+
       <FlatList
         style={styles.burgerList}
         data={lanches}

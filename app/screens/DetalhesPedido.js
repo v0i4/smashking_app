@@ -26,6 +26,9 @@ function DetalhesPedido({ navigation, route }) {
   const [valorAdicional, setValorAdicional] = useState(0);
   const [valorTotal, setValorTotal] = useState(0);
   let nomesAdicionaisPedidos = [];
+  const [valorParcial, setValorParcial] = useState(
+    route.params.valorParcial == null ? 0 : valorParcial
+  );
 
   useEffect(() => {
     getAdicionais();
@@ -34,6 +37,10 @@ function DetalhesPedido({ navigation, route }) {
   useEffect(() => {
     calculaValor();
   }, [valorTotal]);
+
+  useEffect(() => {
+    calculaValor();
+  }, [valorParcial]);
 
   async function getAdicionais() {
     try {
@@ -63,10 +70,13 @@ function DetalhesPedido({ navigation, route }) {
     let valorFormatado = 0;
     //soma os adicionais
     for (let item of listaAdicionais) {
-      valor = parseFloat(valor) + parseFloat(item.preco) * item.quantidade;
+      valor =
+        parseFloat(valor) + parseFloat(item.preco) * parseInt(item.quantidade);
     }
 
-    return parseFloat(valor).toFixed(2);
+    console.log("valor parcial: " + valorParcial + " vl_total = " + valor);
+
+    return (parseFloat(valor) + parseFloat(valorParcial)).toFixed(2);
   }
 
   function addLanche() {
@@ -101,6 +111,7 @@ function DetalhesPedido({ navigation, route }) {
   }
 
   function removeAdicional({ _id }) {
+    setValorTotal(calculaValor());
     let cont = 0;
     for (let item of listaAdicionais) {
       if (_id == item._id) {
@@ -264,10 +275,13 @@ function DetalhesPedido({ navigation, route }) {
           <TouchableOpacity
             onPress={
               () => {
+                setValorParcial(calculaValor());
                 navigation.navigate("Cardapio", {
                   pedido: pedido,
                   user: user,
+                  valorParcial: valorParcial,
                 });
+                console.log("valor parcial " + valorParcial);
               }
 
               /*() => {
@@ -287,7 +301,7 @@ function DetalhesPedido({ navigation, route }) {
         <View style={styles.footerCol2}>
           <TouchableOpacity style={styles.enviarPedidoBtn}>
             <Text style={{ color: "#503292", fontSize: 12 }}>
-              total: R${calculaValor()}
+              valor: R${calculaValor()}
             </Text>
           </TouchableOpacity>
         </View>
