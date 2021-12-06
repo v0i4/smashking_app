@@ -276,6 +276,7 @@ function DetalhesPedido({ navigation, route }) {
             onPress={
               () => {
                 setValorParcial(calculaValor());
+                lanche.adicionais = listaAdicionais;
                 navigation.navigate("Cardapio", {
                   pedido: pedido,
                   user: user,
