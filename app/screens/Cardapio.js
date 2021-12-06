@@ -69,6 +69,12 @@ function Cardapio({ navigation, route }) {
     return pedido.length;
   }
 
+  function getFirstName(nome) {
+    let firstName = nome.split(" ");
+
+    return firstName[0];
+  }
+
   async function obterExpediente() {
     try {
       const response = await api.get("/expediente");
@@ -209,7 +215,9 @@ function Cardapio({ navigation, route }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.enviarPedidoBtn}>
-          <Text style={{ color: "#503292" }}>olá {user.nome}</Text>
+          <Text style={{ color: "#503292" }}>
+            olá {getFirstName(user.nome)}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {

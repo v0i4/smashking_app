@@ -14,7 +14,7 @@ function handleRegisterUser(
 ) {
   let user = {
     nome: nome,
-    email: email,
+    email: email.trim(),
     endereco_completo: endereco,
     nro_celular: nroCel,
     senha: senha,
