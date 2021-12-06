@@ -226,7 +226,7 @@ function Cardapio({ navigation, route }) {
           style={styles.enviarPedidoBtn}
         >
           <Text style={{ color: "#503292" }}>
-            categorias({categorias.length}) - {categoriaSelecionada}
+            categoria - {categoriaSelecionada}
           </Text>
         </TouchableOpacity>
 
